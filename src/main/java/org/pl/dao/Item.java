@@ -2,25 +2,40 @@ package org.pl.dao;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "items")
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+    @Column(name = "title", length = 255, nullable = false)
     private String title;
+    @Column(name = "img_path", length = 500)
     private String imgPath;
-    private Double price;
+    @Column(name = "price", length = 500, nullable = false)
+    private BigDecimal price;
+    @Column(name = "description", nullable = false)
     private String description;
 
     public Item() {
     }
 
-    public Item(String title, String imgPath, Double price, String description) {
+    public Item(String title, String imgPath, BigDecimal price, String description) {
         this.title = title;
         this.imgPath = imgPath;
         this.price = price;
         this.description = description;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -39,11 +54,11 @@ public class Item {
         this.imgPath = imgPath;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
