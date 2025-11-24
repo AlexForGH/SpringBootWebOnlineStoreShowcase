@@ -38,18 +38,20 @@ public class ItemController {
     }
 
     @GetMapping(itemsAction)
-    public String itemsAction(
+    public String getItemsSorted(
             @RequestParam(defaultValue = "1") int pageNumber,
             @RequestParam(defaultValue = "5") int pageSize,
             @RequestParam(defaultValue = "NO") String sort,
+            @RequestParam(required = false) String search,
             Model model
     ) {
         // Учитываем, что пользователь видит страницы с 1, а Spring Data с 0
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
-        Page<List<Item>> itemPage = itemService.getItemsSorted(pageable, sort, 3);
+        Page<List<Item>> itemPage = itemService.getItemsSorted(pageable, sort, search);
 
         model.addAttribute("items", itemPage.getContent()); // Список списков!
         model.addAttribute("sort", sort);
+        model.addAttribute("search", search);
         model.addAttribute("paging", new PagingInfoDto(
                 itemPage.getNumber() + 1,
                 itemPage.getTotalPages(),

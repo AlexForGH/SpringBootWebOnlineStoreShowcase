@@ -15,24 +15,20 @@
             max-width: 300px; /* Ограничиваем максимальную ширину */
             margin: 0 auto; /* Центрируем карточку */
         }
-
         .product-image {
             height: 200px;
             width: 100%;
             object-fit: cover;
         }
-
         .card-body-flex {
             flex: 1;
             display: flex;
             flex-direction: column;
         }
-
         .card-text-flex {
             flex: 1;
             overflow: hidden;
         }
-
         .equal-col {
             display: flex;
             justify-content: center; /* Центрируем карточки в колонках */
@@ -62,12 +58,26 @@
     <div class="row p-2">
         <div class="col">
             <div class="hstack gap-3">
-                <input class="form-control me-2 mw-100" type="search" placeholder="Найти..." aria-label="Поиск"
-                       name="search" th:value="${search}" form="main"/>
-                <button class="btn btn-outline-success" type="submit" form="main">Найти</button>
+                <input
+                        class="form-control me-2 mw-100"
+                        type="search"
+                        placeholder="Найти..."
+                        aria-label="Поиск"
+                        name="search"
+                        th:value="${search}" form="main"
+                />
+                <button
+                        class="btn btn-outline-success"
+                        type="submit"
+                        form="main">Найти
+                </button>
                 <div class="form-floating w-25">
-                    <select class="form-select" id="sort" name="sort"
-                            onchange="document.getElementById('main').submit()" form="main">
+                    <select
+                            class="form-select"
+                            id="sort"
+                            name="sort"
+                            onchange="document.getElementById('main').submit()"
+                            form="main">
                         <option value="NO" th:selected="${sort=='NO'}">🔘 без сортировки</option>
                         <option value="ALPHA_ASC" th:selected="${sort=='ALPHA_ASC'}">🔤 А-Я 🔼</option>
                         <option value="ALPHA_DESC" th:selected="${sort=='ALPHA_DESC'}">🔤 Я-А 🔽</option>
@@ -77,8 +87,12 @@
                     <label for="sort">Сортировка</label>
                 </div>
                 <div class="form-floating w-25">
-                    <select class="form-select" id="pageSize" name="pageSize"
-                            onchange="document.getElementById('main').submit()" form="main">
+                    <select
+                            class="form-select"
+                            id="pageSize"
+                            name="pageSize"
+                            onchange="document.getElementById('main').submit()"
+                            form="main">
                         <option value="2" th:selected="${paging.pageSize==2}">2</option>
                         <option value="5" th:selected="${paging.pageSize==5}">5</option>
                         <option value="10" th:selected="${paging.pageSize==10}">10</option>
