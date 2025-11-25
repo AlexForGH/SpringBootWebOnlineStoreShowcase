@@ -5,7 +5,9 @@ import org.pl.repository.ItemRepository;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -99,6 +101,14 @@ public class ItemService {
                 pageable,
                 itemPage.getTotalElements()
         );
+    }
+
+    public Optional<Item> getItemById(Long id) {
+        return itemRepository.findById(id);
+    }
+
+    public BigDecimal getPriceById(Long id) {
+        return getItemById(id).orElseThrow().getPrice();
     }
 
     private List<List<Item>> chunkList(List<Item> items) {

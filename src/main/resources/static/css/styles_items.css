@@ -1,0 +1,22 @@
+/* Карточка товара на витрине */
+.my-items-product-card {
+    display: flex;
+    flex-direction: column;
+    max-width: 350px;
+    margin: 0 auto;
+    height: 450px;
+    max-height: 550px;
+    overflow: hidden;
+}
+
+/* Контейнер для содержимого (текст, кнопки) — занимает оставшееся место  карточки товара */
+.my-items-product-card-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    overflow-y: auto;
+}
+
+

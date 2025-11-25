@@ -1,0 +1,25 @@
+.my-btn-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    border: none;
+    transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.my-btn-circle:disabled {
+    opacity: 0.5;
+    filter: grayscale(80%);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.my-btn-circle:not(:disabled):hover {
+    opacity: 0.9;
+    transform: scale(1.20);
+}

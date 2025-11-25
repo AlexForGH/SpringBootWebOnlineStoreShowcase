@@ -1,0 +1,27 @@
+/* Контейнер для вертикального списка товаров */
+.my-cart-product-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 680px; /* Согласован с шириной карточки */
+    margin: 0 auto;
+}
+
+/* Карточка товара в корзине */
+.my-cart-product-card {
+    width: 100%;
+    margin: 0 0 1.5rem 0;
+    border-radius: 0.375rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* overflow: hidden; — убран, т.к. прокрутка внутри тела */
+}
+
+/* Тело карточки с прокруткой для длинного контента */
+.my-cart-product-card-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    overflow-y: auto;
+}

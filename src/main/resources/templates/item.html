@@ -3,46 +3,75 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Витрина магазина</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <title th:text="${item.getTitle()}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+          crossorigin="anonymous"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+          rel="stylesheet"/>
+    <link th:href="@{/css/styles_item.css}" rel="stylesheet">
+    <link th:href="@{/css/styles_btn.css}" rel="stylesheet">
 </head>
 
 <body class="bg-light">
+
 <div class="container p-2">
     <div class="row p-2">
         <div class="col">
             <div class="hstack gap-3">
                 <h2>
-                    <span class="badge text-bg-success">Витрина магазина</span>
+                    <span class="badge text-bg-success" th:text="${item.getTitle()}"></span>
                 </h2>
-                <a href="/orders" class="btn btn-secondary ms-auto bi bi-file-earmark-text"> Заказы</a>
-                <a href="/cart/items" class="btn btn-secondary bi bi-cart4"> Корзина</a>
-                <a href="/items" class="btn btn-secondary bi bi-arrow-left-square"> Главная</a>
+                <a th:href="${ordersAction}" class="btn btn-secondary ms-auto bi bi-file-earmark-text"> Заказы</a>
+                <a th:href="${itemsToCartAction}" class="btn btn-secondary bi bi-cart4 position-relative"> Корзина</a>
+                <a th:href="${itemsAction}" class="btn btn-secondary bi bi-arrow-left-square"> Главная</a>
             </div>
         </div>
     </div>
     <div class="row p-2">
         <div class="col">
-            <div class="card">
-                <img class="p-2" th:src="${'/'+item.imgPath()}" alt="Нет изображения" width="300" height="300">
+            <div class="card my-item-product-card ">
+                <!-- Изображение на всю ширину карточки -->
+                <img th:src="${item.imgPath}" class="card-img-top" alt="Нет изображения">
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${item.title()}"></h5>
+                    <h5 class="card-title" th:text="${item.title}"></h5>
                     <h5>
                         <span class="badge text-bg-success justify-content-end"
-                              th:text="${item.price()}+' руб.'"></span>
+                              th:text="${item.price}+' руб.'"></span>
                     </h5>
-                    <p class="card-text" th:text="${item.description()}"></p>
-                    <form th:action="@{${'/items/'+item.id()}}" method="post">
+                    <p class="card-text" th:text="${item.description}"></p>
+
+                    <!-- Форма с кнопками -->
+                    <form th:action="${itemsAction+'/'+item.id}" method="post">
                         <div class="hstack gap-3">
-                            <button type="submit" class="btn btn-outline-secondary" name="action" value="MINUS">-
+                            <input type="hidden" name="id" th:value="${item.id}">
+
+                            <!-- Кнопка MINUS активна только когда count > 0 -->
+                            <button type="submit"
+                                    class="badge text-bg-warning my-btn-circle"
+                                    name="action"
+                                    value="MINUS"
+                                    th:disabled="${itemCounts <= 0}">−
                             </button>
-                            <span th:text="${item.count()}"></span>
-                            <button type="submit" class="btn btn-outline-secondary" name="action" value="PLUS">+
+
+                            <!-- Отображаем актуальное количество для каждого товара -->
+                            <span th:text="${itemCounts}"></span>
+
+                            <!-- Кнопка PLUS всегда активна -->
+                            <button type="submit"
+                                    class="badge text-bg-success my-btn-circle"
+                                    name="action"
+                                    value="PLUS">+
                             </button>
-                            <button type="submit" class="btn btn-warning ms-auto bi bi-cart4" name="action" value="PLUS"
-                                    th:if="${item.count()==0}"></button>
+
+                            <!-- Кнопка MINUS активна только когда count > 0 -->
+                            <button type="submit"
+                                    class="btn btn-success ms-auto"
+                                    name="action"
+                                    value="BUY">
+                                <i class="bi bi-cart-check"></i> Купить
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -51,6 +80,7 @@
     </div>
 </div>
 
+<!-- Подключение скриптов -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
@@ -58,5 +88,4 @@
         integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
         crossorigin="anonymous"></script>
 </body>
-
 </html>
