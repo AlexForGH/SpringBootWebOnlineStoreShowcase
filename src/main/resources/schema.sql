@@ -27,25 +27,75 @@ CREATE TABLE order_items (
 
 
 -- Заполнение таблицы товаров (IT-товары)
-INSERT INTO items (title, img_path, price, description) VALUES
-                                                            ('MacBook Pro 16"', 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp16-spacegray-select-202301?wid=904&hei=840&fmt=jpeg&qlt=90&.v=1671304673202', 2499.99, 'Ноутбук Apple MacBook Pro 16 дюймов с чипом M2 Pro, 16 ГБ ОЗУ, 1 ТБ SSD'),
-                                                            ('Dell XPS 13', 'https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/notebooks/xps-notebooks/xps-13-9320/media-gallery/notebook-xps-13-9320-nt-blue-gallery-1.psd?fmt=pjpg&pscan=auto&scl=1&wid=3333&hei=3333&qlt=100%2C0&resMode=sharp2&size=3333%2C3333', 1299.99, 'Ультрабук Dell XPS 13 с процессором Intel Core i7, 16 ГБ ОЗУ, 512 ГБ SSD'),
-                                                            ('Logitech MX Keys', 'https://resource.logitech.com/w_692,c_lpad,ar_4:3,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/keyboards/mx-keys-s/gallery/mx-keys-s-keyboard-top-view-graphite.png?v=1', 99.99, 'Беспроводная клавиатура Logitech MX Keys с подсветкой'),
-                                                            ('Razer DeathAdder V2', 'https://assets2.razerzone.com/images/og-image/razer-deathadder-v2-OGimage-1200x630.jpg', 69.99, 'Игровая мышь Razer DeathAdder V2 с сенсором 20K DPI'),
-                                                            ('Samsung Odyssey G7', 'https://images.samsung.com/is/image/samsung/p6pim/ru/lc32g75tqsixci/gallery/ru-odyssey-g7-lc32g75tqsixci-532072789?$650_519_PNG$', 699.99, 'Игровой монитор 32" Samsung Odyssey G7, 240 Гц, QLED, изогнутый'),
-                                                            ('PlayStation 5', 'https://gmedia.playstation.com/is/image/SIEPDC/ps5-product-thumbnail-01-en-14sep21?$1600px$', 499.99, 'Игровая консоль Sony PlayStation 5 с Ultra HD Blu-ray'),
-                                                            ('AirPods Pro', 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MTJV3?wid=1144&hei=1144&fmt=jpeg&qlt=90&.v=1694014871985', 249.99, 'Беспроводные наушники Apple AirPods Pro с шумоподавлением'),
-                                                            ('iPad Air', 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-air-select-wifi-blue-202203?wid=940&hei=1112&fmt=png-alpha&.v=1645066731336', 749.99, 'Планшет Apple iPad Air с чипом M1, 10.9 дюймов, 256 ГБ'),
-                                                            ('Keychron K2', 'https://cdn.shopify.com/s/files/1/0059/0630/8897/products/keychron-k2-wireless-mechanical-keyboard-for-mac-windows-version-2-red-switch-white-backlight-1060x_1200x1200.jpg?v=1652083789', 89.99, 'Механическая клавиатура Keychron K2 с Bluetooth'),
-                                                            ('LG UltraGear', 'https://www.lg.com/ru/images/monitors/md07569916/gallery/27GN800-B_350_D1.jpg', 449.99, 'Игровой монитор LG UltraGear 27" 144 Гц, IPS');
-
--- Заполнение таблицы заказов
 INSERT INTO orders (order_number, total_amount, order_date) VALUES
                                                                 ('ORD-2024-001', 2599.98, '2024-01-15 10:30:00'),
                                                                 ('ORD-2024-002', 819.98, '2024-01-16 14:45:00'),
                                                                 ('ORD-2024-003', 1189.97, '2024-01-17 09:15:00'),
                                                                 ('ORD-2024-004', 149.98, '2024-01-18 16:20:00'),
                                                                 ('ORD-2024-005', 1249.98, '2024-01-19 11:00:00');
+
+-- Заполнение таблицы заказов
+INSERT INTO items (title, img_path, price, description) VALUES
+                                                            (
+                                                                'MacBook Pro 16"',
+                                                                'https://gearopen.com/wp-content/uploads/2019/11/mbp16touch-space-gallery1-201911-1280x720.jpeg',
+                                                                2499.99,
+                                                                'Ноутбук Apple MacBook Pro 16 дюймов с чипом M2 Pro, 16 ГБ ОЗУ, 1 ТБ SSD'
+                                                            ),
+                                                            (
+                                                                'Dell XPS 13',
+                                                                'https://media.cnn.com/api/v1/images/stellar/prod/220609090511-dell-xps-13-2022-1.jpg?c=16x9&q=h_720,w_1280,c_fill',
+                                                                1299.99,
+                                                                'Ультрабук Dell XPS 13 с процессором Intel Core i7, 16 ГБ ОЗУ, 512 ГБ SSD'
+                                                            ),
+                                                            (
+                                                                'Logitech MX Keys',
+                                                                'https://avatars.mds.yandex.net/i?id=27bf07bdcfac2f3f94581037eb50647c_l-12598198-images-thumbs&n=13',
+                                                                99.99,
+                                                                'Беспроводная клавиатура Logitech MX Keys с подсветкой'
+                                                            ),
+                                                            (
+                                                                'Razer DeathAdder V2',
+                                                                'https://avatars.mds.yandex.net/i?id=b6fdf8a8939ac629467195a31b105c5c2a33d90f-10230136-images-thumbs&n=13',
+                                                                69.99,
+                                                                'Игровая мышь Razer DeathAdder V2 с сенсором 20K DPI'
+                                                            ),
+                                                            (
+                                                                'Samsung Odyssey G7',
+                                                                'https://avatars.mds.yandex.net/i?id=f1b6bf7689f90262073f87cf9934d2f5_l-5229416-images-thumbs&n=13',
+                                                                699.99,
+                                                                'Игровой монитор 32" Samsung Odyssey G7, 240 Гц, QLED, изогнутый'
+                                                            ),
+                                                            (
+                                                                'PlayStation 5',
+                                                                'https://images.stopgame.ru/news/2023/10/10/wCkGi0WV.jpg',
+                                                                499.99,
+                                                                'Игровая консоль Sony PlayStation 5 с Ultra HD Blu-ray'
+                                                            ),
+                                                            (
+                                                                'AirPods Pro',
+                                                                'https://cdn1.ozone.ru/s3/multimedia-1-2/7126526270.jpg',
+                                                                249.99,
+                                                                'Беспроводные наушники Apple AirPods Pro с шумоподавлением'
+                                                            ),
+                                                            (
+                                                                'iPad Air',
+                                                                'https://avatars.mds.yandex.net/i?id=d3a5c39b92504815efb4a3616e9fc6e8_l-8312020-images-thumbs&n=13',
+                                                                749.99,
+                                                                'Планшет Apple iPad Air с чипом M1, 10.9 дюймов, 256 ГБ'
+                                                            ),
+                                                            (
+                                                                'Keychron K2',
+                                                                'https://avatars.mds.yandex.net/i?id=62b8bed197916a2b54b35748e69c1387d6d1850e-5409727-images-thumbs&n=13',
+                                                                89.99,
+                                                                'Механическая клавиатура Keychron K2 с Bluetooth'
+                                                            ),
+                                                            (
+                                                                'LG UltraGear',
+                                                                'https://avatars.mds.yandex.net/i?id=0a2de61037dbe20dc947f7cc32ddd112_l-5222738-images-thumbs&n=13',
+                                                                449.99,
+                                                                'Игровой монитор LG UltraGear 27" 144 Гц, IPS'
+                                                            );
 
 -- Заполнение таблицы элементов заказа
 INSERT INTO order_items (order_id, item_id, quantity) VALUES
