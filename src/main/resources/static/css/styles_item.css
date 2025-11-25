@@ -1,0 +1,7 @@
+/* Карточка товара */
+.my-item-product-card {
+    display: flex;
+    flex-direction: column;
+    max-width: 450px;
+    margin: 0 auto;
+}

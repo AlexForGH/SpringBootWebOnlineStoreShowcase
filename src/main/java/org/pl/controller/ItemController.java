@@ -8,29 +8,28 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static org.pl.controller.ItemController.Actions.itemsAction;
+import static org.pl.controller.Actions.*;
 
 
 @Controller
-@RequestMapping("/")
+@RequestMapping()
 public class ItemController {
 
-    private ItemService itemService;
+    private final ItemService itemService;
+
+    private final Map<Long, Integer> itemsCounts = new HashMap<>();
+    private int totalItemsCounts = 0;
 
     public ItemController(ItemService itemService) {
         this.itemService = itemService;
     }
-
-    static final class Actions {
-        static final String itemsAction = "/items";
-    }
-
 
     @GetMapping()
     public String redirectToItems() {
@@ -38,18 +37,24 @@ public class ItemController {
     }
 
     @GetMapping(itemsAction)
-    public String itemsAction(
+    public String getItemsSorted(
             @RequestParam(defaultValue = "1") int pageNumber,
             @RequestParam(defaultValue = "5") int pageSize,
             @RequestParam(defaultValue = "NO") String sort,
+            @RequestParam(required = false) String search,
             Model model
     ) {
+        checkItemsCount();
+
         // Учитываем, что пользователь видит страницы с 1, а Spring Data с 0
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
-        Page<List<Item>> itemPage = itemService.getItemsSorted(pageable, sort, 3);
+        Page<List<Item>> itemPage = itemService.getItemsSorted(pageable, sort, search);
 
         model.addAttribute("items", itemPage.getContent()); // Список списков!
         model.addAttribute("sort", sort);
+        model.addAttribute("search", search);
+        model.addAttribute("itemsCounts", itemsCounts);
+        model.addAttribute("totalItemsCounts", totalItemsCounts);
         model.addAttribute("paging", new PagingInfoDto(
                 itemPage.getNumber() + 1,
                 itemPage.getTotalPages(),
@@ -57,6 +62,75 @@ public class ItemController {
                 itemPage.hasPrevious(),
                 itemPage.hasNext()
         ));
+        model.addAttribute("ordersAction", ordersAction);
+        model.addAttribute("cartAction", cartAction);
+        model.addAttribute("itemsAction", itemsAction);
+        model.addAttribute("itemsToCartAction", itemsToCartAction);
         return "items";
+    }
+
+    @PostMapping(itemsAction)
+    public String increaseDecreaseItemsCount(
+            @RequestParam Long id,
+            @RequestParam String action,
+            @RequestParam String search,
+            @RequestParam int pageNumber
+    ) {
+        increaseDecreaseCount(action, id);
+        return "redirect:" + itemsAction + "?pageNumber=" + pageNumber + "&search=" + search;
+    }
+
+    @GetMapping(itemsToCartAction)
+    public String redirectToItemsToCart(
+            RedirectAttributes redirectAttributes
+    ) {
+        redirectAttributes.addFlashAttribute("itemsCounts", itemsCounts);
+        return "redirect:" + cartAction;
+    }
+
+    @GetMapping(itemsAction + "/{id}")
+    public String getItemById(
+            @PathVariable Long id,
+            Model model
+    ) {
+        Item item = itemService.getItemById(id).orElseThrow();
+        model.addAttribute("item", item);
+        model.addAttribute("ordersAction", ordersAction);
+        model.addAttribute("cartAction", cartAction);
+        model.addAttribute("itemsAction", itemsAction);
+        model.addAttribute("itemCounts", itemsCounts.getOrDefault(id, 0));
+        model.addAttribute("itemsToCartAction", itemsToCartAction);
+        return "item";
+    }
+
+    @PostMapping(itemsAction + "/{id}")
+    public String increaseDecreaseItemCount(
+            @PathVariable Long id,
+            @RequestParam String action
+    ) {
+        increaseDecreaseCount(action, id);
+        return "redirect:" + itemsAction + "/" + id;
+    }
+
+    private void increaseDecreaseCount(String action, Long id) {
+        int currentCount = itemsCounts.getOrDefault(id, 0);
+
+        switch (action) {
+            case "PLUS":
+                itemsCounts.put(id, currentCount + 1);
+                break;
+            case "MINUS":
+                if (currentCount > 0) {
+                    itemsCounts.put(id, currentCount - 1);
+                }
+                break;
+        }
+    }
+
+    private void checkItemsCount() {
+        itemsCounts.entrySet().removeIf(entry -> entry.getValue() == 0);
+        totalItemsCounts = itemsCounts.values().stream()
+                .mapToInt(value -> value)
+                .sum();
     }
 }
