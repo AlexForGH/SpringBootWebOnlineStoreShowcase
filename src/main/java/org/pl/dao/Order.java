@@ -19,15 +19,15 @@ public class Order {
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
     @Column(name = "order_date")
-    private LocalDateTime orderDate = LocalDateTime.now();
+    private LocalDateTime orderDate;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     public Order() {
     }
 
-    public Order(Long id, String orderNumber, BigDecimal totalAmount, LocalDateTime orderDate) {
-        this.id = id;
+    public Order(String orderNumber, BigDecimal totalAmount, LocalDateTime orderDate) {
         this.orderNumber = orderNumber;
         this.totalAmount = totalAmount;
         this.orderDate = orderDate;
@@ -63,5 +63,13 @@ public class Order {
 
     public void setOrderDate(LocalDateTime orderDate) {
         this.orderDate = orderDate;
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 }

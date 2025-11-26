@@ -1,46 +1,46 @@
 package org.pl.controller;
 
 import org.pl.dao.Item;
+import org.pl.dao.Order;
 import org.pl.service.ItemService;
+import org.pl.service.OrderItemService;
+import org.pl.service.OrderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.pl.controller.Actions.*;
+import static org.pl.utils.ItemsUtils.itemsCounts;
 
 @Controller
 @RequestMapping()
 public class CartController {
 
     private final ItemService itemService;
+    private final OrderService orderService;
+    private final OrderItemService orderItemService;
 
-    private Map<Long, Integer> itemsCounts = new HashMap<>();
-
-    public CartController(ItemService itemService) {
+    public CartController(ItemService itemService, OrderService orderService, OrderItemService orderItemService) {
         this.itemService = itemService;
+        this.orderService = orderService;
+        this.orderItemService = orderItemService;
     }
 
     @GetMapping(cartAction)
-    public String cartAction(
-            @ModelAttribute("itemsCounts") Map<Long, Integer> itemsCounts,
-            Model model
-    ) {
-        this.itemsCounts = itemsCounts;
-
+    public String cartAction(Model model) {
         itemsCounts.entrySet().removeIf(entry -> entry.getValue() == 0);
 
-        List<Item> items = this.itemsCounts.keySet().stream()
+        List<Item> items = itemsCounts.keySet().stream()
                 .map(id -> itemService.getItemById(id).orElseThrow()).toList();
 
         model.addAttribute("itemsCounts", itemsCounts);
         model.addAttribute("items", items);
-        model.addAttribute("ordersAction", ordersAction);
         model.addAttribute("cartAction", cartAction);
         model.addAttribute("itemsAction", itemsAction);
         model.addAttribute("buyAction", buyAction);
@@ -72,9 +72,72 @@ public class CartController {
         return "redirect:" + cartAction;
     }
 
+    @PostMapping(buyAction)
+    public String buyItems(RedirectAttributes redirectAttributes) {
+        try {
+            Order savedOrder = orderService.createOrder(getTotalItemsSum(itemsCounts));
+            orderItemService.saveOrder(savedOrder, itemsCounts);
+            itemsCounts.clear();
+            addFlashAttributeForBuyItems(redirectAttributes, savedOrder.getOrderNumber(), null);
+        } catch (Exception e) {
+            addFlashAttributeForBuyItems(redirectAttributes, null, e);
+        }
+
+        return "redirect:" + itemsAction;
+    }
+
+    @PostMapping(buyAction + "/{id}")
+    public String buyItems(
+            RedirectAttributes redirectAttributes,
+            @PathVariable Long id
+    ) {
+        try {
+            Order savedOrder = orderService.createOrder(
+                    itemService.getPriceById(id).multiply(BigDecimal.valueOf(itemsCounts.get(id))
+                    )
+            );
+            orderItemService.saveOrder(
+                    savedOrder,
+                    itemsCounts.entrySet().stream()
+                            .filter(entry -> entry.getKey().equals(id))
+                            .collect(
+                                    Collectors.toMap(
+                                            Map.Entry::getKey,
+                                            Map.Entry::getValue
+                                    )
+                            )
+            );
+            itemsCounts.remove(id);
+            addFlashAttributeForBuyItems(redirectAttributes, savedOrder.getOrderNumber(), null);
+        } catch (Exception e) {
+            addFlashAttributeForBuyItems(redirectAttributes, null, e);
+        }
+        return "redirect:" + itemsAction;
+    }
+
     private BigDecimal getTotalItemsSum(Map<Long, Integer> itemsCounts) {
         return itemsCounts.entrySet().stream()
                 .map(entry -> itemService.getPriceById(entry.getKey()).multiply(BigDecimal.valueOf(entry.getValue())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private void addFlashAttributeForBuyItems(
+            RedirectAttributes redirectAttributes,
+            String orderNumber,
+            Exception e
+    ) {
+        if (e == null) {
+            redirectAttributes.addFlashAttribute(
+                    "toastMessage",
+                    "Заказ №" + orderNumber + " успешно оформлен!"
+            );
+            redirectAttributes.addFlashAttribute("toastType", "success");
+        } else {
+            redirectAttributes.addFlashAttribute(
+                    "toastMessage",
+                    "Ошибка при оформлении заказа: " + e.getMessage()
+            );
+            redirectAttributes.addFlashAttribute("toastType", "error");
+        }
     }
 }

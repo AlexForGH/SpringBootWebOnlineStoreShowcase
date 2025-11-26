@@ -10,8 +10,6 @@
           crossorigin="anonymous"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
           rel="stylesheet"/>
-    <link th:href="@{/css/styles_orders.css}" rel="stylesheet">
-    <link th:href="@{/css/styles_btn.css}" rel="stylesheet">
     <link th:href="@{/css/styles_zoom.css}" rel="stylesheet">
 </head>
 
@@ -23,14 +21,13 @@
                 <h2>
                     <span class="badge text-bg-success">Список заказов</span>
                 </h2>
-                <a href="/cart/items" class="btn btn-secondary bi bi-cart4 ms-auto"> Корзина</a>
-                <a href="/items" class="btn btn-secondary bi bi-arrow-left-square"> Главная</a>
+                <a th:href="${itemsAction}" class="btn btn-secondary ms-auto bi bi-arrow-left-square"> Главная</a>
             </div>
         </div>
     </div>
 
     <!-- Блок для пустого списка заказов -->
-    <div class="row p-2" th:if="${orders == null || orders.isEmpty()}">
+    <div class="row p-2" th:if="${ordersWithItems == null || ordersWithItems.isEmpty()}">
         <div class="col">
             <div class="card text-center">
                 <div class="card-body py-5">
@@ -43,18 +40,19 @@
         </div>
     </div>
 
-    <div class="row p-2" th:each="order : ${orders}">
+    <div class="row p-2" th:each="orderWithItems : ${ordersWithItems}">
         <div class="col">
-            <div class="card">
+            <div class="card my-zoom">
                 <div class="card-header">
-                    <a th:text="${'Заказ №'+order.id}" th:href="${'/orders/'+order.id}"></a>
+                    <a th:text="${'Заказ №'+orderWithItems.order.getOrderNumber}"
+                       th:href="${ordersAction+'/'+orderWithItems.order.id}"></a>
                 </div>
-                <ul class="list-group list-group-flush" th:each="item : ${order.items}">
+                <ul class="list-group list-group-flush" th:each="itemInOrder : ${orderWithItems.itemInOrderDTOs()}">
                     <li class="list-group-item"
-                        th:text="${item.title+' ('+item.count+' шт.) '+(item.price*item.count)+' руб.'}"/>
+                        th:text="${itemInOrder.item.title+' ('+itemInOrder.quantity+' шт.) '+(itemInOrder.item.price*itemInOrder.quantity())+' руб.'}"/>
                 </ul>
                 <div class="card-footer">
-                    <b th:text="${'Сумма: '+order.totalSum}+' руб.'"></b>
+                    <b th:text="${'Сумма: '+orderWithItems.order.totalAmount}+' руб.'"></b>
                 </div>
             </div>
         </div>
