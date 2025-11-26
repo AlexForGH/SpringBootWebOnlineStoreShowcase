@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title th:text="${item.getTitle()}"></title>
+    <title th:text="${item.title}"></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
           rel="stylesheet"
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
@@ -21,10 +21,16 @@
         <div class="col">
             <div class="hstack gap-3">
                 <h2>
-                    <span class="badge text-bg-success" th:text="${item.getTitle()}"></span>
+                    <span class="badge text-bg-success" th:text="${item.title}"></span>
                 </h2>
                 <a th:href="${ordersAction}" class="btn btn-secondary ms-auto bi bi-file-earmark-text"> Заказы</a>
-                <a th:href="${itemsToCartAction}" class="btn btn-secondary bi bi-cart4 position-relative"> Корзина</a>
+                <a th:href="${itemsToCartAction}"
+                   class="btn btn-secondary bi bi-cart4 position-relative"> Корзина
+                    <span th:if="${totalItemsCounts > 0}"
+                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                          th:text="${totalItemsCounts}">
+                    </span>
+                </a>
                 <a th:href="${itemsAction}" class="btn btn-secondary bi bi-arrow-left-square"> Главная</a>
             </div>
         </div>
@@ -43,37 +49,41 @@
                     <p class="card-text" th:text="${item.description}"></p>
 
                     <!-- Форма с кнопками -->
-                    <form th:action="${itemsAction+'/'+item.id}" method="post">
-                        <div class="hstack gap-3">
-                            <input type="hidden" name="id" th:value="${item.id}">
+                    <div class="hstack gap-2">
+                        <form th:action="${itemsAction+'/'+item.id}" method="post">
+                            <div class="hstack gap-3">
+                                <input type="hidden" name="id" th:value="${item.id}">
 
-                            <!-- Кнопка MINUS активна только когда count > 0 -->
-                            <button type="submit"
-                                    class="badge text-bg-warning my-btn-circle"
-                                    name="action"
-                                    value="MINUS"
-                                    th:disabled="${itemCounts <= 0}">−
-                            </button>
+                                <!-- Кнопка MINUS активна только когда count > 0 -->
+                                <button type="submit"
+                                        class="badge text-bg-warning my-btn-circle"
+                                        name="action"
+                                        value="MINUS"
+                                        th:disabled="${itemCounts <= 0}">−
+                                </button>
 
-                            <!-- Отображаем актуальное количество для каждого товара -->
-                            <span th:text="${itemCounts}"></span>
+                                <!-- Отображаем актуальное количество для каждого товара -->
+                                <span th:text="${itemCounts}"></span>
 
-                            <!-- Кнопка PLUS всегда активна -->
-                            <button type="submit"
-                                    class="badge text-bg-success my-btn-circle"
-                                    name="action"
-                                    value="PLUS">+
-                            </button>
-
-                            <!-- Кнопка MINUS активна только когда count > 0 -->
+                                <!-- Кнопка PLUS всегда активна -->
+                                <button type="submit"
+                                        class="badge text-bg-success my-btn-circle"
+                                        name="action"
+                                        value="PLUS">+
+                                </button>
+                            </div>
+                        </form>
+                        <!-- Кнопка BUY активна только когда count > 0 -->
+                        <form th:action="${buyAction+'/'+item.id}" method="post" class="ms-auto">
                             <button type="submit"
                                     class="btn btn-success ms-auto"
                                     name="action"
-                                    value="BUY">
+                                    value="BUY"
+                                    th:disabled="${itemCounts <= 0}">
                                 <i class="bi bi-cart-check"></i> Купить
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

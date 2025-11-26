@@ -11,11 +11,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.pl.controller.Actions.*;
+import static org.pl.utils.ItemsUtils.*;
 
 
 @Controller
@@ -23,9 +22,6 @@ import static org.pl.controller.Actions.*;
 public class ItemController {
 
     private final ItemService itemService;
-
-    private final Map<Long, Integer> itemsCounts = new HashMap<>();
-    private int totalItemsCounts = 0;
 
     public ItemController(ItemService itemService) {
         this.itemService = itemService;
@@ -41,8 +37,7 @@ public class ItemController {
             @RequestParam(defaultValue = "1") int pageNumber,
             @RequestParam(defaultValue = "5") int pageSize,
             @RequestParam(defaultValue = "NO") String sort,
-            @RequestParam(required = false) String search,
-            Model model
+            @RequestParam(required = false) String search, Model model
     ) {
         checkItemsCount();
 
@@ -53,15 +48,8 @@ public class ItemController {
         model.addAttribute("items", itemPage.getContent()); // Список списков!
         model.addAttribute("sort", sort);
         model.addAttribute("search", search);
-        model.addAttribute("itemsCounts", itemsCounts);
-        model.addAttribute("totalItemsCounts", totalItemsCounts);
-        model.addAttribute("paging", new PagingInfoDto(
-                itemPage.getNumber() + 1,
-                itemPage.getTotalPages(),
-                itemPage.getSize(),
-                itemPage.hasPrevious(),
-                itemPage.hasNext()
-        ));
+        model.addAttribute("itemsCounts", itemsCounts); model.addAttribute("totalItemsCounts", totalItemsCounts);
+        model.addAttribute("paging", new PagingInfoDto(itemPage.getNumber() + 1, itemPage.getTotalPages(), itemPage.getSize(), itemPage.hasPrevious(), itemPage.hasNext()));
         model.addAttribute("ordersAction", ordersAction);
         model.addAttribute("cartAction", cartAction);
         model.addAttribute("itemsAction", itemsAction);
@@ -70,29 +58,21 @@ public class ItemController {
     }
 
     @PostMapping(itemsAction)
-    public String increaseDecreaseItemsCount(
-            @RequestParam Long id,
-            @RequestParam String action,
-            @RequestParam String search,
-            @RequestParam int pageNumber
-    ) {
+    public String increaseDecreaseItemsCount(@RequestParam Long id, @RequestParam String action, @RequestParam String search, @RequestParam int pageNumber) {
         increaseDecreaseCount(action, id);
         return "redirect:" + itemsAction + "?pageNumber=" + pageNumber + "&search=" + search;
     }
 
     @GetMapping(itemsToCartAction)
-    public String redirectToItemsToCart(
-            RedirectAttributes redirectAttributes
-    ) {
+    public String redirectToItemsToCart(RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("itemsCounts", itemsCounts);
         return "redirect:" + cartAction;
     }
 
     @GetMapping(itemsAction + "/{id}")
-    public String getItemById(
-            @PathVariable Long id,
-            Model model
-    ) {
+    public String getItemById(@PathVariable Long id, Model model) {
+        checkItemsCount();
+
         Item item = itemService.getItemById(id).orElseThrow();
         model.addAttribute("item", item);
         model.addAttribute("ordersAction", ordersAction);
@@ -100,14 +80,13 @@ public class ItemController {
         model.addAttribute("itemsAction", itemsAction);
         model.addAttribute("itemCounts", itemsCounts.getOrDefault(id, 0));
         model.addAttribute("itemsToCartAction", itemsToCartAction);
+        model.addAttribute("totalItemsCounts", totalItemsCounts);
+        model.addAttribute("buyAction", buyAction);
         return "item";
     }
 
     @PostMapping(itemsAction + "/{id}")
-    public String increaseDecreaseItemCount(
-            @PathVariable Long id,
-            @RequestParam String action
-    ) {
+    public String increaseDecreaseItemCount(@PathVariable Long id, @RequestParam String action) {
         increaseDecreaseCount(action, id);
         return "redirect:" + itemsAction + "/" + id;
     }
@@ -125,12 +104,5 @@ public class ItemController {
                 }
                 break;
         }
-    }
-
-    private void checkItemsCount() {
-        itemsCounts.entrySet().removeIf(entry -> entry.getValue() == 0);
-        totalItemsCounts = itemsCounts.values().stream()
-                .mapToInt(value -> value)
-                .sum();
     }
 }

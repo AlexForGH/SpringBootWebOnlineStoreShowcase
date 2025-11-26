@@ -3,55 +3,55 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Витрина магазина</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <title th:text="${orderWithItems.order.orderNumber}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+          crossorigin="anonymous"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+          rel="stylesheet"/>
+    <link th:href="@{/css/styles_zoom.css}" rel="stylesheet">
 </head>
 
 <body class="bg-light">
-<div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${newOrder}">
-    Поздравляем! Успешная покупка! &#128578;
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
 
 <div class="container p-2">
     <div class="row p-2">
         <div class="col">
             <div class="hstack gap-3">
                 <h2>
-                    <span class="badge text-bg-success">Витрина магазина</span>
+                    <span class="badge text-bg-success" th:text="${'Заказ ' + orderWithItems.order.orderNumber}"></span>
                 </h2>
-                <a href="/orders" class="btn btn-secondary ms-auto bi bi-file-earmark-text"> Заказы</a>
-                <a href="/cart/items" class="btn btn-secondary bi bi-cart4"> Корзина</a>
-                <a href="/items" class="btn btn-secondary bi bi-arrow-left-square"> Главная</a>
+                <a th:href="${ordersAction}" class="btn btn-secondary ms-auto bi bi-file-earmark-text"> Заказы</a>
+                <a th:href="${itemsAction}" class="btn btn-secondary bi bi-arrow-left-square"> Главная</a>
             </div>
         </div>
     </div>
+
     <div class="row p-2">
         <div class="col">
-            <h2 th:text="${'Заказ №'+order.id()}"></h2>
+            <div class="hstack gap-3 align-items-center">
+                    <span class="badge text-bg-warning fs-5">
+                       Итого: <strong th:text="${orderWithItems.order.totalAmount}+' руб.'"></strong>
+                    </span>
+            </div>
         </div>
     </div>
-    <div class="row p-2" th:each="item : ${order.items()}">
+
+    <div class="row p-2" th:each="itemInOrder : ${orderWithItems.itemInOrderDTOs()}">
         <div class="col">
-            <div class="card">
+            <div class="card my-zoom">
                 <div class="card-header">
-                    <b th:text="${item.title()}"></b>
+                    <b th:text="${itemInOrder.item.title}"></b>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item" th:text="${item.count()}+' шт.'"/>
-                    <li class="list-group-item" th:text="${item.price()}+' руб.'"/>
+                    <li class="list-group-item" th:text="${itemInOrder.quantity}+' шт.'"/>
+                    <li class="list-group-item" th:text="${itemInOrder.item.price}+' руб.'"/>
                 </ul>
                 <div class="card-footer">
-                    <b th:text="${'Сумма: '+item.count()*item.price()}+' руб.'"></b>
+                    <b th:text="${'Сумма: '+itemInOrder.quantity*itemInOrder.item.price}+' руб.'"></b>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row p-2">
-        <div class="col">
-            <h3 th:text="${'Сумма: '+order.totalSum()}+' руб.'"></h3>
         </div>
     </div>
 </div>
@@ -63,5 +63,4 @@
         integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
         crossorigin="anonymous"></script>
 </body>
-
 </html>

@@ -13,7 +13,9 @@
     <link th:href="@{/css/styles_btn.css}" rel="stylesheet">
     <link th:href="@{/css/styles_zoom.css}" rel="stylesheet">
 </head>
+
 <body class="bg-light">
+
 <div class="container p-2">
     <div class="row p-2">
         <div class="col">
@@ -21,8 +23,7 @@
                 <h2>
                     <span class="badge text-bg-success">Ваша корзина</span>
                 </h2>
-                <a th:href="${ordersAction}" class="btn btn-secondary ms-auto bi bi-file-earmark-text"> Заказы</a>
-                <a th:href="${itemsAction}" class="btn btn-secondary bi bi-arrow-left-square"> Главная</a>
+                <a th:href="${itemsAction}" class="btn btn-secondary ms-auto bi bi-arrow-left-square"> Главная</a>
             </div>
         </div>
     </div>
@@ -78,11 +79,11 @@
                                 class="badge text-bg-warning my-btn-circle"
                                 name="action"
                                 value="MINUS"
-                                th:disabled="${itemsCounts.getOrDefault(item.getId(), 0) <= 0}">−
+                                th:disabled="${itemsCounts.getOrDefault(item.id, 0) <= 0}">−
                         </button>
 
                         <!-- Отображаем актуальное количество для каждого товара -->
-                        <span th:text="${itemsCounts.getOrDefault(item.getId(), 0)}"></span>
+                        <span th:text="${itemsCounts.getOrDefault(item.id, 0)}"></span>
 
                         <!-- Кнопка PLUS всегда активна -->
                         <button type="submit"

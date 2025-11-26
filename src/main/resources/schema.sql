@@ -20,7 +20,7 @@ CREATE TABLE order_items (
                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
                              order_id BIGINT NOT NULL,
                              item_id BIGINT NOT NULL,
-                             quantity INT NOT NULL DEFAULT 1,
+                             quantity INT NOT NULL,
                              FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
                              FOREIGN KEY (item_id) REFERENCES items(id)
 );
@@ -132,25 +132,31 @@ INSERT INTO items (title, img_path, price, description) VALUES
 
 -- Заполнение таблицы заказов
 INSERT INTO orders (order_number, total_amount, order_date) VALUES
-                                                                ('ORD-2024-001', 2599.98, '2024-01-15 10:30:00'),
-                                                                ('ORD-2024-002', 819.98, '2024-01-16 14:45:00'),
-                                                                ('ORD-2024-003', 1189.97, '2024-01-17 09:15:00'),
-                                                                ('ORD-2024-004', 149.98, '2024-01-18 16:20:00'),
-                                                                ('ORD-2024-005', 1249.98, '2024-01-19 11:00:00');
+                                                                ('ORD-2024-001', 2749.98, '2024-01-15 10:30:00'),
+                                                                ('ORD-2024-002', 349.96,  '2024-01-16 14:45:00'),
+                                                                ('ORD-2024-003', 1799.98, '2024-01-17 09:15:00'),
+                                                                ('ORD-2024-004', 139.98,  '2024-01-18 16:20:00'),
+                                                                ('ORD-2024-005', 1199.98, '2024-01-19 11:00:00');
 
 -- Заполнение таблицы элементов заказа
 INSERT INTO order_items (order_id, item_id, quantity) VALUES
-                                                          (1, 1, 1),  -- MacBook Pro в заказе 1
-                                                          (1, 7, 1),  -- AirPods Pro в заказе 1
+                                                          -- Заказ ORD-2024-001 (ID=1): MacBook Pro + AirPods Pro
+                                                          (1, 1, 1),  -- MacBook Pro 16" M2 Pro (item_id=1)
+                                                          (1, 11, 1), -- AirPods Pro (item_id=11)
 
-                                                          (2, 3, 1),  -- Logitech MX Keys в заказе 2
-                                                          (2, 4, 1),  -- Razer DeathAdder в заказе 2
-                                                          (2, 9, 2),  -- 2x Keychron K2 в заказе 2
+                                                          -- Заказ ORD-2024-002 (ID=2): Logitech MX Keys + Razer DeathAdder + 2×Keychron K2
+                                                          (2, 5, 1),  -- Logitech MX Keys (item_id=5)
+                                                          (2, 6, 1),  -- Razer DeathAdder V2 (item_id=6)
+                                                          (2, 15, 2), -- Keychron K2 (item_id=15), количество=2
 
-                                                          (3, 2, 1),  -- Dell XPS 13 в заказе 3
-                                                          (3, 6, 1),  -- PlayStation 5 в заказе 3
 
-                                                          (4, 4, 2),  -- 2x Razer DeathAdder в заказе 4
+                                                          -- Заказ ORD-2024-003 (ID=3): Dell XPS 13 + PlayStation 5
+                                                          (3, 3, 1),  -- Dell XPS 13 RAM 16 GB (item_id=3)
+                                                          (3, 9, 1),  -- PlayStation 5 (item_id=9)
 
-                                                          (5, 8, 1),  -- iPad Air в заказе 5
-                                                          (5, 10, 1); -- LG UltraGear в заказе 5
+                                                          -- Заказ ORD-2024-004 (ID=4): 2×Razer DeathAdder V2
+                                                          (4, 6, 2),  -- Razer DeathAdder V2 (item_id=6), количество=2
+
+                                                          -- Заказ ORD-2024-005 (ID=5): iPad Air M1 + LG UltraGear 27"
+                                                          (5, 13, 1), -- iPad Air M1 (item_id=13)
+                                                          (5, 17, 1); -- LG UltraGear 27" (item_id=17)
