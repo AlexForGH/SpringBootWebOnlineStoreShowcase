@@ -74,8 +74,10 @@ public class CartController {
 
     @PostMapping(buyAction)
     public String buyItems(RedirectAttributes redirectAttributes) {
+        Long id = 0L;
         try {
             Order savedOrder = orderService.createOrder(getTotalItemsSum(itemsCounts));
+            id = savedOrder.getId();
             orderItemService.saveOrder(savedOrder, itemsCounts);
             itemsCounts.clear();
             addFlashAttributeForBuyItems(redirectAttributes, savedOrder.getOrderNumber(), null);
@@ -83,7 +85,7 @@ public class CartController {
             addFlashAttributeForBuyItems(redirectAttributes, null, e);
         }
 
-        return "redirect:" + itemsAction;
+        return "redirect:" + ordersAction + "/" + id;
     }
 
     @PostMapping(buyAction + "/{id}")
@@ -112,7 +114,7 @@ public class CartController {
         } catch (Exception e) {
             addFlashAttributeForBuyItems(redirectAttributes, null, e);
         }
-        return "redirect:" + itemsAction;
+        return "redirect:" + ordersAction + "/" + id;
     }
 
     private BigDecimal getTotalItemsSum(Map<Long, Integer> itemsCounts) {
