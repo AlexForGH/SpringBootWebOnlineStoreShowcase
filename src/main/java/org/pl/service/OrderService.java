@@ -3,6 +3,7 @@ package org.pl.service;
 import org.pl.dao.Order;
 import org.pl.repository.OrderRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
+    @Transactional()
     public Order createOrder(BigDecimal totalAmount) {
         Order newOrder = new Order(
                 generateNextOrderNumber(),
@@ -26,7 +28,8 @@ public class OrderService {
         return orderRepository.save(newOrder);
     }
 
-    private String generateNextOrderNumber() {
+    @Transactional(readOnly = true)
+    public String generateNextOrderNumber() {
         int currentYear = LocalDate.now().getYear();
 
         // Получаем последний номер за текущий год

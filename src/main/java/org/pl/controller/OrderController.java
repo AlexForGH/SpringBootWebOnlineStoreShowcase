@@ -14,11 +14,9 @@ import static org.pl.controller.Actions.*;
 @RequestMapping()
 public class OrderController {
 
-    private final OrderService orderService;
     private final OrderItemService orderItemService;
 
-    public OrderController(OrderService orderService, OrderItemService orderItemService) {
-        this.orderService = orderService;
+    public OrderController(OrderItemService orderItemService) {
         this.orderItemService = orderItemService;
     }
 
@@ -37,5 +35,4 @@ public class OrderController {
         model.addAttribute("ordersAction", ordersAction);
         return "order";
     }
-
 }

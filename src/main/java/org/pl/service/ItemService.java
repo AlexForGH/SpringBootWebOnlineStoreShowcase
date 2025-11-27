@@ -4,6 +4,7 @@ import org.pl.dao.Item;
 import org.pl.repository.ItemRepository;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,6 +21,7 @@ public class ItemService {
         this.itemRepository = itemRepository;
     }
 
+    @Transactional(readOnly = true)
     public Page<List<Item>> getItemsSorted(Pageable pageable, String sortBy, String title) {
 
         Page<Item> itemPage;
@@ -103,10 +105,12 @@ public class ItemService {
         );
     }
 
+    @Transactional(readOnly = true)
     public Optional<Item> getItemById(Long id) {
         return itemRepository.findById(id);
     }
 
+    @Transactional(readOnly = true)
     public BigDecimal getPriceById(Long id) {
         return getItemById(id).orElseThrow().getPrice();
     }
