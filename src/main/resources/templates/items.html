@@ -129,11 +129,11 @@
                                     class="badge text-bg-warning my-btn-circle"
                                     name="action"
                                     value="MINUS"
-                                    th:disabled="${itemsCounts.getOrDefault(item.getId(), 0) <= 0}">−
+                                    th:disabled="${cartItems.getOrDefault(item.getId(), 0) <= 0}">−
                             </button>
 
                             <!-- Отображаем актуальное количество для каждого товара -->
-                            <span th:text="${itemsCounts.getOrDefault(item.getId(), 0)}"></span>
+                            <span th:text="${cartItems.getOrDefault(item.getId(), 0)}"></span>
 
                             <!-- Кнопка PLUS всегда активна -->
                             <button type="submit"

@@ -1,34 +1,45 @@
 package org.pl.controller;
 
+import jakarta.servlet.http.HttpSession;
 import org.pl.dao.Order;
 import org.pl.service.CartService;
+import org.pl.service.SessionItemsCountsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import static org.pl.controller.Actions.*;
-import static org.pl.utils.ItemsUtils.itemsCounts;
 
 @Controller
 @RequestMapping()
 public class CartController {
 
     private final CartService cartService;
+    private final SessionItemsCountsService sessionItemsCountsService;
 
-    public CartController(CartService cartService) {
+    public CartController(
+            CartService cartService,
+            SessionItemsCountsService sessionItemsCountsService
+    ) {
         this.cartService = cartService;
+        this.sessionItemsCountsService = sessionItemsCountsService;
     }
 
     @GetMapping(cartAction)
-    public String cartAction(Model model) {
-        itemsCounts.entrySet().removeIf(entry -> entry.getValue() == 0);
-        model.addAttribute("itemsCounts", itemsCounts);
-        model.addAttribute("items", cartService.getItemsByItemsCounts());
+    public String cartAction(
+            Model model,
+            HttpSession httpSession
+    ) {
+        sessionItemsCountsService.getCartItems(httpSession)
+                .entrySet()
+                .removeIf(entry -> entry.getValue() == 0);
+        model.addAttribute("cartItems", sessionItemsCountsService.getCartItems(httpSession));
+        model.addAttribute("items", cartService.getItemsByItemsCounts(httpSession));
         model.addAttribute("cartAction", cartAction);
         model.addAttribute("itemsAction", itemsAction);
         model.addAttribute("buyAction", buyAction);
-        model.addAttribute("totalItemsSum", cartService.getTotalItemsSum());
+        model.addAttribute("totalItemsSum", cartService.getTotalItemsSum(httpSession));
         return "cart";
     }
 
@@ -36,31 +47,25 @@ public class CartController {
     public String increaseDecreaseItemsCount(
             @RequestParam Long id,
             @RequestParam String action,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            HttpSession httpSession
     ) {
-        int currentCount = itemsCounts.getOrDefault(id, 0);
-        switch (action) {
-            case "PLUS":
-                itemsCounts.put(id, currentCount + 1);
-                break;
-            case "MINUS":
-                if (currentCount > 0) {
-                    itemsCounts.put(id, currentCount - 1);
-                }
-                break;
-            case "DELETE":
-                itemsCounts.remove(id);
-                break;
-        }
-        redirectAttributes.addFlashAttribute("itemsCounts", itemsCounts);
+        sessionItemsCountsService.updateItemCount(httpSession, id, action);
+        redirectAttributes.addFlashAttribute(
+                "cartItems",
+                sessionItemsCountsService.getCartItems(httpSession)
+        );
         return "redirect:" + cartAction;
     }
 
     @PostMapping(buyAction)
-    public String buyItems(RedirectAttributes redirectAttributes) {
+    public String buyItems(
+            RedirectAttributes redirectAttributes,
+            HttpSession httpSession
+    ) {
         Long orderId = 0L;
         try {
-            Order savedOrder = cartService.createSaveOrders();
+            Order savedOrder = cartService.createSaveOrders(httpSession);
             orderId = savedOrder.getId();
             addFlashAttributeForBuyItems(redirectAttributes, savedOrder.getOrderNumber(), null);
         } catch (Exception e) {
@@ -73,11 +78,12 @@ public class CartController {
     @PostMapping(buyAction + "/{id}")
     public String buyItem(
             RedirectAttributes redirectAttributes,
-            @PathVariable Long id
+            @PathVariable Long id,
+            HttpSession httpSession
     ) {
         Long orderId = 0L;
         try {
-            Order savedOrder = cartService.createSaveOrder(id);
+            Order savedOrder = cartService.createSaveOrder(id, httpSession);
             orderId = savedOrder.getId();
             addFlashAttributeForBuyItems(redirectAttributes, savedOrder.getOrderNumber(), null);
         } catch (Exception e) {

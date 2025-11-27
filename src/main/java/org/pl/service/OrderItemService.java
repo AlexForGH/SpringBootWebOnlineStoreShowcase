@@ -71,8 +71,8 @@ public class OrderItemService {
     }
 
     @Transactional()
-    public void saveOrder(Order order, Map<Long, Integer> itemsCounts) {
-        itemsCounts.forEach((itemId, quantity) -> {
+    public void saveOrder(Order order, Map<Long, Integer> cartItems) {
+        cartItems.forEach((itemId, quantity) -> {
             orderItemRepository.save(
                     new OrderItem(
                             order,
